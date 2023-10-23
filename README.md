@@ -1,2 +1,7 @@
 # todo-customizer
-Friendly TODO App
+
+A Friendly TODO App
+
+## Getting Started
+
+Feel Free to help :)
