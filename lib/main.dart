@@ -1,43 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:todo_customizer/add_todo_form.dart';
 import 'package:todo_customizer/todo.dart';
 
 void main() {
-  return runApp(TodoCustomizer());
+  return runApp(MaterialApp(
+    home: TodoCustomizer(),
+  ));
 }
 
-class TodoCustomizer extends StatelessWidget {
+class TodoCustomizer extends StatefulWidget {
   TodoCustomizer({super.key});
 
+  @override
+  State<TodoCustomizer> createState() => _TodoCustomizerState();
+}
+
+class _TodoCustomizerState extends State<TodoCustomizer> {
   final List todos = [
     {
-      "percent": 0.3,
-      "spent": "1h 20min",
       "title": "idk",
-      "total": "2h 40min",
+      "total_hour": 2,
+      "total_min": 40,
+      "spent_hour": 1,
+      "spent_min": 20
     },
     {
-      "percent": 0.3,
-      "spent": "1h 20min",
-      "title": "idk",
-      "total": "2h 40min",
+      "title": "idk2",
+      "total_hour": 6,
+      "total_min": 40,
+      "spent_hour": 1,
+      "spent_min": 20
     },
   ];
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(
-            title: const Text("TODO Customizer"),
-          ),
-          body: Column(
-            children: todos
-                .map((todo) => Todo(
-                    title: todo["title"],
-                    spent: todo["spent"],
-                    total: todo["total"],
-                    percent: todo["percent"]))
-                .toList(),
-          )),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("TODO Customizer"),
+      ),
+      body: Column(
+        children: todos
+            .map(
+              (todo) => Todo(
+                title: todo["title"],
+                spent: '${todo["spent_hour"]}h ${todo["spent_min"]}m',
+                total: '${todo["total_hour"]}h ${todo["total_min"]}m',
+                percent: (todo["spent_hour"] * 60 + todo["spent_min"]) /
+                    (todo["total_hour"] * 60 + todo["total_min"]),
+              ),
+            )
+            .toList(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddTodoForm()),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }

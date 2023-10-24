@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_customizer/theme.dart' as Theme;
 
 class Todo extends StatelessWidget {
   final String title, spent, total;
@@ -14,7 +15,20 @@ class Todo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(title),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Theme.red,
+                  fontSize: Theme.titleSize,
+                ),
+              ),
+            ],
+          ),
+        ),
         Stack(
           children: <Widget>[
             Container(
