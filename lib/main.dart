@@ -3,13 +3,13 @@ import 'package:todo_customizer/add_todo_form.dart';
 import 'package:todo_customizer/todo.dart';
 
 void main() {
-  return runApp(MaterialApp(
+  return runApp(const MaterialApp(
     home: TodoCustomizer(),
   ));
 }
 
 class TodoCustomizer extends StatefulWidget {
-  TodoCustomizer({super.key});
+  const TodoCustomizer({super.key});
 
   @override
   State<TodoCustomizer> createState() => _TodoCustomizerState();
@@ -32,21 +32,19 @@ class _TodoCustomizerState extends State<TodoCustomizer> {
       "spent_min": 20
     },
   ];
-
   Future<void> _navigateResult(BuildContext context) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const AddTodoForm()),
     );
 
-    if (!mounted) return;
-
+    if (!mounted || result == null) return;
     todos.add({
       "title": result["title"],
       "total_hour": result["hour"],
       "total_min": result["min"],
       "spent_hour": 0,
-      "spent_min": 0
+      "spent_min": 0,
     });
     setState(() {});
   }
@@ -57,19 +55,17 @@ class _TodoCustomizerState extends State<TodoCustomizer> {
       appBar: AppBar(
         title: const Text("TODO Customizer"),
       ),
-      body: Column(
-        children: todos
-            .map(
-              (todo) => Todo(
-                title: todo["title"],
-                spent: '${todo["spent_hour"]}h ${todo["spent_min"]}m',
-                total: '${todo["total_hour"]}h ${todo["total_min"]}m',
-                percent: (todo["spent_hour"] * 60 + todo["spent_min"]) /
-                    (todo["total_hour"] * 60 + todo["total_min"]),
-              ),
-            )
-            .toList(),
-      ),
+      body: Column(children: [
+        for (int i = 0; i < todos.length; i++)
+          Todo(
+            todo: todos[i],
+            updateTodo: (newValue) {
+              todos[i] = newValue;
+              setState(() {});
+            },
+            index: i,
+          )
+      ]),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _navigateResult(context);

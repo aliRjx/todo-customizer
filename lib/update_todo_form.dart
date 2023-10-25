@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:todo_customizer/theme.dart' as theme;
 
-class AddTodoForm extends StatefulWidget {
-  const AddTodoForm({super.key});
+class UpdateTodoForm extends StatefulWidget {
+  final Map todo;
+  const UpdateTodoForm({super.key, required this.todo});
 
   @override
-  State<AddTodoForm> createState() => _AddTodoFormState();
+  State<UpdateTodoForm> createState() => _UpdateTodoFormState();
 }
 
-class _AddTodoFormState extends State<AddTodoForm> {
+class _UpdateTodoFormState extends State<UpdateTodoForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  String? title = "";
-  int hour = 0, min = 0;
   @override
   Widget build(BuildContext context) {
+    String? title = widget.todo["title"];
+    int? hour = widget.todo["total_hour"], min = widget.todo["total_min"];
+    int? spentHour = 0, spentMin = 0;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add TODO'),
+        title: const Text('Update TODO'),
       ),
       body: Container(
         padding: const EdgeInsets.all(40.0),
@@ -27,11 +28,14 @@ class _AddTodoFormState extends State<AddTodoForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              const Text("Update TODO Data",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               Flexible(
                 child: TextFormField(
                   onChanged: (value) {
                     title = value;
                   },
+                  initialValue: title,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.all(10),
                     labelText: "Title",
@@ -50,7 +54,53 @@ class _AddTodoFormState extends State<AddTodoForm> {
                   Flexible(
                     child: TextFormField(
                       onChanged: (value) {
-                        hour = int.tryParse(value)!;
+                        hour = int.tryParse(value);
+                      },
+                      initialValue: hour.toString(),
+                      decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
+                          labelText: "Total Hours"),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20.0,
+                  ),
+                  Flexible(
+                    child: TextFormField(
+                      onChanged: (value) {
+                        min = int.tryParse(value);
+                      },
+                      initialValue: min.toString(),
+                      decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
+                          labelText: "Total Minutes"),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              const Text("Add to Spent Time",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                "Current spent time: ${widget.todo["spent_hour"]}h ${widget.todo["spent_min"]}m",
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Flexible(
+                    child: TextFormField(
+                      onChanged: (value) {
+                        spentHour = int.tryParse(value);
                       },
                       decoration: const InputDecoration(
                           contentPadding: EdgeInsets.all(10),
@@ -67,7 +117,7 @@ class _AddTodoFormState extends State<AddTodoForm> {
                   Flexible(
                     child: TextFormField(
                       onChanged: (value) {
-                        min = int.tryParse(value)!;
+                        spentMin = int.tryParse(value);
                       },
                       decoration: const InputDecoration(
                           contentPadding: EdgeInsets.all(10),
@@ -103,17 +153,22 @@ class _AddTodoFormState extends State<AddTodoForm> {
                         // the form is invalid.
                         if (_formKey.currentState!.validate()) {
                           // Process data.
-                          if (min > 59) {
-                            hour += (min / 60).floor();
-                            min = min % 60;
-                          } else if (hour == 0 && min == 0) {
-                            hour = 1;
+                          int sm = widget.todo["spent_min"] + spentMin;
+                          int sh = widget.todo["spent_hour"] + spentHour;
+                          if (sm > 59) {
+                            sh += (sm / 60).floor();
+                            sm = sm % 60;
                           }
-                          Navigator.pop(context,
-                              {"title": title, "hour": hour, "min": min});
+                          Navigator.pop(context, {
+                            "title": title,
+                            "total_hour": hour,
+                            "total_min": min,
+                            "spent_hour": sh,
+                            "spent_min": sm,
+                          });
                         }
                       },
-                      child: const Text('Submit'),
+                      child: const Text('Update'),
                     ),
                   ],
                 ),

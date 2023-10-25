@@ -1,55 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:todo_customizer/theme.dart' as Theme;
+import 'package:todo_customizer/theme.dart' as theme;
+import 'package:todo_customizer/update_todo_form.dart';
 
 class Todo extends StatelessWidget {
-  final String title, spent, total;
-  final double percent;
-  Todo(
+  final Map todo;
+  final Function updateTodo;
+  final int index;
+  const Todo(
       {super.key,
-      required this.title,
-      required this.spent,
-      required this.total,
-      required this.percent});
+      required this.todo,
+      required this.updateTodo,
+      required this.index});
+
+  Future<void> _navigateResult(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UpdateTodoForm(todo: todo)),
+    );
+    if (result == null) return;
+
+    updateTodo(result);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Theme.red,
-                  fontSize: Theme.titleSize,
+    final percent = (todo["spent_hour"] * 60 + todo["spent_min"]) /
+        (todo["total_hour"] * 60 + todo["total_min"]);
+    return InkWell(
+      onTap: () {
+        _navigateResult(context);
+      },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Text(
+                  todo["title"],
+                  style: const TextStyle(
+                    color: theme.red,
+                    fontSize: theme.titleSize,
+                  ),
                 ),
+              ],
+            ),
+          ),
+          Stack(
+            children: <Widget>[
+              SizedBox(
+                height: 20,
+                child: LinearProgressIndicator(
+                  value: percent,
+                  backgroundColor: Colors.white,
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(5),
+                    bottomRight: Radius.circular(5),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                    "${todo['spent_hour']}h ${todo['spent_min']}m / ${todo['total_hour']}h ${todo['total_min']}m"),
               ),
             ],
           ),
-        ),
-        Stack(
-          children: <Widget>[
-            Container(
-              height: 20,
-              child: LinearProgressIndicator(
-                value: percent,
-                backgroundColor: Colors.white,
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(5),
-                  bottomRight: Radius.circular(5),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Text("${spent} / ${total}"),
-            ),
-          ],
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
