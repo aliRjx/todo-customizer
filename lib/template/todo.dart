@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo_customizer/theme.dart' as theme;
-import 'package:todo_customizer/update_todo_form.dart';
+import 'package:todo_customizer/themes/theme.dart' as theme;
+import 'package:todo_customizer/form/update_todo_form.dart';
 
 class Todo extends StatelessWidget {
   final Map todo;
@@ -38,8 +38,8 @@ class Todo extends StatelessWidget {
               children: [
                 Text(
                   todo["title"],
-                  style: const TextStyle(
-                    color: theme.red,
+                  style: TextStyle(
+                    color: percent < 1 ? theme.red : theme.green,
                     fontSize: theme.titleSize,
                   ),
                 ),
@@ -53,7 +53,15 @@ class Todo extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: percent,
                   backgroundColor: Colors.white,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+                  valueColor: percent < 0.25
+                      ? const AlwaysStoppedAnimation<Color>(theme.red)
+                      : percent < 0.50
+                          ? const AlwaysStoppedAnimation<Color>(theme.orange)
+                          : percent < 1
+                              ? const AlwaysStoppedAnimation<Color>(
+                                  theme.yellow)
+                              : const AlwaysStoppedAnimation<Color>(
+                                  theme.green),
                   borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(5),
                     bottomRight: Radius.circular(5),

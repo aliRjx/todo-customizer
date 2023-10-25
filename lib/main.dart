@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo_customizer/add_todo_form.dart';
-import 'package:todo_customizer/todo.dart';
+import 'package:todo_customizer/form/add_todo_form.dart';
+import 'package:todo_customizer/template/todo.dart';
 
 void main() {
   return runApp(const MaterialApp(
@@ -16,22 +16,7 @@ class TodoCustomizer extends StatefulWidget {
 }
 
 class _TodoCustomizerState extends State<TodoCustomizer> {
-  List todos = [
-    {
-      "title": "idk",
-      "total_hour": 2,
-      "total_min": 40,
-      "spent_hour": 1,
-      "spent_min": 20
-    },
-    {
-      "title": "idk2",
-      "total_hour": 6,
-      "total_min": 40,
-      "spent_hour": 1,
-      "spent_min": 20
-    },
-  ];
+  List todos = [];
   Future<void> _navigateResult(BuildContext context) async {
     final result = await Navigator.push(
       context,
