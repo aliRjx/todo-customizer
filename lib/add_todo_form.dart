@@ -2,9 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:todo_customizer/theme.dart' as Theme;
 
-class AddTodoForm extends StatelessWidget {
+class AddTodoForm extends StatefulWidget {
   const AddTodoForm({super.key});
 
+  @override
+  State<AddTodoForm> createState() => _AddTodoFormState();
+}
+
+class _AddTodoFormState extends State<AddTodoForm> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String? title = "";
+  int? hour = 0, min = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,74 +22,98 @@ class AddTodoForm extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.all(40.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              child: TextField(
-                decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10), labelText: "Title"),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Flexible(
+                child: TextFormField(
+                  onChanged: (value) {
+                    title = value;
+                  },
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(10),
+                    labelText: "Title",
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter title';
+                    }
+                    return null;
+                  },
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(10), labelText: "Hours"),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Flexible(
+                    child: TextFormField(
+                      onChanged: (value) {
+                        hour = int.tryParse(value);
+                      },
+                      decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
+                          labelText: "Hours"),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  width: 20.0,
-                ),
-                Flexible(
-                  child: TextField(
-                    decoration: const InputDecoration(
-                        contentPadding: EdgeInsets.all(10),
-                        labelText: "Minutes"),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
+                  const SizedBox(
+                    width: 20.0,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Go back!'),
+                  Flexible(
+                    child: TextFormField(
+                      onChanged: (value) {
+                        min = int.tryParse(value);
+                      },
+                      decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(10),
+                          labelText: "Minutes"),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                    ),
                   ),
+                ],
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Go back!'),
+                    ),
+                    ElevatedButton(
+                      style: const ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll(Theme.green)),
+                      onPressed: () {
+                        // zValidate will return true if the form is valid, or false if
+                        // the form is invalid.
+                        if (_formKey.currentState!.validate()) {
+                          // Process data.
+                          Navigator.pop(context,
+                              {"title": title, "hour": hour, "min": min});
+                        }
+                      },
+                      child: const Text('Submit'),
+                    ),
+                  ],
                 ),
-                const SizedBox(
-                  width: 30,
-                ),
-                Center(
-                  child: ElevatedButton(
-                    style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(Theme.green)),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Save'),
-                  ),
-                ),
-              ],
-            )
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

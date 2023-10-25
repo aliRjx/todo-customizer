@@ -16,7 +16,7 @@ class TodoCustomizer extends StatefulWidget {
 }
 
 class _TodoCustomizerState extends State<TodoCustomizer> {
-  final List todos = [
+  List todos = [
     {
       "title": "idk",
       "total_hour": 2,
@@ -32,6 +32,24 @@ class _TodoCustomizerState extends State<TodoCustomizer> {
       "spent_min": 20
     },
   ];
+
+  Future<void> _navigateResult(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddTodoForm()),
+    );
+
+    if (!mounted) return;
+
+    todos.add({
+      "title": result["title"],
+      "total_hour": result["hour"],
+      "total_min": result["min"],
+      "spent_hour": 0,
+      "spent_min": 0
+    });
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +72,7 @@ class _TodoCustomizerState extends State<TodoCustomizer> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddTodoForm()),
-          );
+          _navigateResult(context);
         },
         child: const Icon(Icons.add),
       ),
