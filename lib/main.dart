@@ -67,6 +67,11 @@ class _TodoCustomizerState extends State<TodoCustomizer> {
               db.saveData(todos);
               setState(() {});
             },
+            removeTodo: () {
+              todos.removeAt(i);
+              db.saveData(todos);
+              setState(() {});
+            },
             index: i,
           )
       ]),

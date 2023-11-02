@@ -167,6 +167,14 @@ class _UpdateTodoFormState extends State<UpdateTodoForm> {
                       },
                       child: const Text('Update'),
                     ),
+                    ElevatedButton(
+                      style: const ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll(theme.red)),
+                      onPressed: () {
+                        Navigator.pop(context, "DELETE");
+                      },
+                      child: const Text('Delete'),
+                    ),
                   ],
                 ),
               ),

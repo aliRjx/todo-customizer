@@ -4,12 +4,13 @@ import 'package:todo_customizer/form/update_todo_form.dart';
 
 class Todo extends StatelessWidget {
   final Map todo;
-  final Function updateTodo;
+  final Function updateTodo, removeTodo;
   final int index;
   const Todo(
       {super.key,
       required this.todo,
       required this.updateTodo,
+      required this.removeTodo,
       required this.index});
 
   Future<void> _navigateResult(BuildContext context) async {
@@ -17,9 +18,13 @@ class Todo extends StatelessWidget {
       context,
       MaterialPageRoute(builder: (context) => UpdateTodoForm(todo: todo)),
     );
-    if (result == null) return;
-
-    updateTodo(result);
+    if (result == null) {
+      return;
+    } else if (result == "DELETE") {
+      removeTodo();
+    } else {
+      updateTodo(result);
+    }
   }
 
   @override
