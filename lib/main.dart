@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:todo_customizer/db/todo_db.dart';
 import 'package:todo_customizer/form/add_todo_form.dart';
 import 'package:todo_customizer/template/todo.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox("todo_db");
   return runApp(const MaterialApp(
     home: TodoCustomizer(),
   ));
@@ -17,6 +21,7 @@ class TodoCustomizer extends StatefulWidget {
 
 class _TodoCustomizerState extends State<TodoCustomizer> {
   List todos = [];
+  final db = HiveDataBase();
   Future<void> _navigateResult(BuildContext context) async {
     final result = await Navigator.push(
       context,
@@ -31,7 +36,20 @@ class _TodoCustomizerState extends State<TodoCustomizer> {
       "spent_hour": 0,
       "spent_min": 0,
     });
+    db.saveData(todos);
     setState(() {});
+  }
+
+  void prepareData() {
+    if (db.readData().isNotEmpty) {
+      todos = db.readData();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    prepareData();
   }
 
   @override
@@ -46,6 +64,7 @@ class _TodoCustomizerState extends State<TodoCustomizer> {
             todo: todos[i],
             updateTodo: (newValue) {
               todos[i] = newValue;
+              db.saveData(todos);
               setState(() {});
             },
             index: i,

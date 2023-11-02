@@ -100,7 +100,7 @@ class _UpdateTodoFormState extends State<UpdateTodoForm> {
                   Flexible(
                     child: TextFormField(
                       onChanged: (value) {
-                        spentHour = int.tryParse(value);
+                        spentHour = int.tryParse(value) ?? 0;
                       },
                       decoration: const InputDecoration(
                           contentPadding: EdgeInsets.all(10),
@@ -117,7 +117,7 @@ class _UpdateTodoFormState extends State<UpdateTodoForm> {
                   Flexible(
                     child: TextFormField(
                       onChanged: (value) {
-                        spentMin = int.tryParse(value);
+                        spentMin = int.tryParse(value) ?? 0;
                       },
                       decoration: const InputDecoration(
                           contentPadding: EdgeInsets.all(10),
